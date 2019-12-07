@@ -1,5 +1,4 @@
-﻿using Simulador.Models;
-using SistemaSolar;
+﻿using SistemaSolar;
 using System;
 using System.Collections.Generic;
 using System.Linq;

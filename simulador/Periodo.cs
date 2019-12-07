@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Simulador.Models
+namespace Simulador
 {
     public enum TipoPeriodo
     {
