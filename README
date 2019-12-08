@@ -1,0 +1,29 @@
+Solución SistemaSolar contiene 5 proyectos en C#:
+
+ApiClima: api rest con un endpoint para conultar el clima por día:
+  http://apiclima.azurewebsites.net/api/dia/1
+  El último elemento es el número de día. Ejemplo:
+    http://apiclima.azurewebsites.net/api/dia/0
+    devuelve
+    {
+      "numeroDia": 0.0,
+      "clima": "Sequia"
+    }
+    
+    http://apiclima.azurewebsites.net/api/dia/23
+    devuelve
+    {
+      "numeroDia": 23.0,
+      "clima": "Lluvia"
+    }
+
+GeneradorDatos: aplicación de consola (.exe) que se ejecuta una sola vez para insertar datos en la base de datos en la nube.
+  Las tablas fueron creadas con los scripts tiposClima.sql y dias.sql.
+  
+Simulador: aplicación de consola (.exe) que ejecuta para la simulación del sistema solar para una determinada cantidad de días.
+  El número de días simulado está hardcodeado a 3652 (10 años) pero fácilmente se puede parametrizar por args.
+  Imprime por consola los resultados de la simulación.
+  
+SistemaSolar: dll que modela al sistema solar con los planetas, y calcula el tipo de clima.
+
+SistemaSolar.Test: dll con tests unitarios para la dll SistemaSolar.
