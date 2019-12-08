@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using SistemaSolar;
+using System;
 
 namespace Simulador
 {
-    public enum TipoPeriodo
-    {
-        Sequia,
-        Lluvia,
-        COPT,
-        Normal
-    };
-
+    /// <summary>
+    /// Representa un período de días del mismo tipo de clima
+    /// </summary>
     public class Periodo
     {
         public int DiaInicial { get; set; }
@@ -29,7 +23,7 @@ namespace Simulador
             }
         }
         public TipoPeriodo Tipo { get; set; }
-        public int DiaPico { get; set; }
+        public int DiaPicoIntensidadLluvia { get; set; }
         public double IntensidadLluvia { get; set; }
 
         public Periodo (int diaInicial, TipoPeriodo tipo)

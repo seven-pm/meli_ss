@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 namespace Simulador
 {
@@ -11,34 +10,46 @@ namespace Simulador
     {
         public static void Main(string[] args)
         {
-            Simular(3652, 1, 0, 0);
+            // 3652 días = 10 años.
+            Simular(3652, 0, 0, 0);
         }
 
+        /// <summary>
+        /// Simula la evolución del sistema solar por una cantidad de días, y registra datos
+        /// sobre los períodos climáticos.
+        /// </summary>
+        /// <param name="dias">Cantidad de días de la simulación. Se parte desde el día 0.</param>
+        /// <param name="angulo1">Ángulo inicial del primer planeta (500km)</param>
+        /// <param name="angulo2">Ángulo inicial del segundo planeta (1000km)</param>
+        /// <param name="angulo3">Ángulo inicial del tercer planeta (2000km)</param>
         public static void Simular(
             int dias,
             double angulo1 = 0,
             double angulo2 = 0,
-            double angulo3 = 0,
-            int delay = 0,
-            bool printSequia = false, 
-            bool printLluvia = false, 
-            bool printLluviaPico = false, 
-            bool printCOPT = false,
-            bool printNormal = false)
+            double angulo3 = 0)
         {
+            if (dias <= 0)
+            {
+                throw new ArgumentException("La cantidad de días debe ser mayor a 0.");
+            }
+
             var espacio = new Espacio(new List<Planeta>
             {
                 new Planeta(500, 1, true, "Ferengi", angulo1),
                 new Planeta(1000, 5, false, "Vulcano", angulo2),
-                new Planeta(2000, 3, true, "Betasoide", angulo3)           
+                new Planeta(2000, 3, true, "Betasoide", angulo3)
             });
 
+            // Para registrar el valor máximo de intensidad de lluvia en toda la simulación.
             var intensidadMaximaLluvia = 0d;
+            // Flags para determinar en qué período climático se encuentra la simulación.
             var periodoSequia = false;
             var periodoLluvia = false;
             var periodoCOPT = false;
+            // Lista de períodos donde se registra toda la información que se imprime al final de la simulación.
             var periodos = new List<Periodo>();
 
+            // Por cada día, se analiza si hay que abrir o cerrar un período climático.
             for (var i = 0; i < dias; ++i)
             {
                 espacio.CalcularClima();
@@ -60,8 +71,6 @@ namespace Simulador
                         periodos.Add(new Periodo(espacio.DiaActual, TipoPeriodo.Sequia));
                     }
                     // Si ya estaba en período de sequía, sigue acumulando días.
-
-                    if (printSequia) { Console.WriteLine(espacio.Reportar()); }
                 }
                 else if (espacio.Lluvia)
                 {
@@ -84,15 +93,12 @@ namespace Simulador
                     if (espacio.IntensidadLluvia > intensidadMaximaLluvia)
                     {
                         intensidadMaximaLluvia = espacio.IntensidadLluvia;
-                        periodos[periodos.Count - 1].DiaPico = espacio.DiaActual;
+                        periodos[periodos.Count - 1].DiaPicoIntensidadLluvia = espacio.DiaActual;
                         periodos[periodos.Count - 1].IntensidadLluvia = intensidadMaximaLluvia;
                     }
-
                     // Si ya estaba en período de lluvia, sigue acumulando días.
-
-                    if (printLluvia) { Console.WriteLine(espacio.Reportar()); }
                 }
-                else if (espacio.CondicionesOptimasPyT)
+                else if (espacio.COPT)
                 {
                     if (!periodoCOPT)
                     {
@@ -110,8 +116,6 @@ namespace Simulador
                         periodos.Add(new Periodo(espacio.DiaActual, TipoPeriodo.COPT));
                     }
                     // Si ya estaba en período de COPT, sigue acumulando días.
-
-                    if (printCOPT) { Console.WriteLine(espacio.Reportar()); }
                 }
                 else
                 {
@@ -124,18 +128,22 @@ namespace Simulador
                         periodoCOPT = false;
                         intensidadMaximaLluvia = 0;
                     }
-
-                    if (printNormal) { Console.WriteLine(espacio.Reportar()); }
                 }
 
                 espacio.AvanzarDia();
-
-                if (delay > 0) { Thread.Sleep(delay); }
             }
 
             Print(periodos);
         }
 
+        /// <summary>
+        /// Se imprimen:
+        /// La cantidad de períodos de cada tipo de clima.
+        /// El/los día/s con pico de intensidad de lluvia (independientes del período).
+        /// Detalles de cada período, con día inicial y día final, agrupados por tipo de clima.
+        /// Para los períodos de lluvia, el día con pico de intensidad para ese período.
+        /// </summary>
+        /// <param name="periodos">Lista de períodos climáticos.</param>
         public static void Print(List<Periodo> periodos)
         {
             Console.WriteLine($"Períodos de sequía: {periodos.Count(x => x.Tipo == TipoPeriodo.Sequia)}");
@@ -149,7 +157,7 @@ namespace Simulador
             {
                 if (periodo.IntensidadLluvia == maximaIntensidad)
                 {
-                    diasPico.Append(periodo.DiaPico);
+                    diasPico.Append(periodo.DiaPicoIntensidadLluvia);
                     diasPico.Append(",");
                 }
             }
@@ -171,7 +179,7 @@ namespace Simulador
             foreach (var periodo in periodos.Where(x => x.Tipo == TipoPeriodo.Lluvia))
             {
                 Console.Write($"Desde {periodo.DiaInicial} hasta {periodo.DiaFinal}");
-                Console.WriteLine($" con pico en día {periodo.DiaPico} ({periodo.IntensidadLluvia:n})");
+                Console.WriteLine($" con pico en día {periodo.DiaPicoIntensidadLluvia} ({periodo.IntensidadLluvia:n})");
             }
             Console.WriteLine("---------------------------------------------------------");
             
