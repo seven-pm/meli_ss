@@ -92,25 +92,72 @@ namespace SistemaSolar.Test
         }
 
         [Fact]
+        [Trait("Category", "COPT")]
+        public void COPTConPlanetasAlineados1()
+        {
+            var sistema = CrearSistema(313, 235, 219);
+            sistema.CalcularClima();
+            Assert.True(sistema.COPT);
+        }
+
+        [Fact]
+        [Trait("Category", "COPT")]
+        public void COPTConPlanetasAlineados2()
+        {
+            var sistema = CrearSistema(296, 320, 168);
+            sistema.CalcularClima();
+            Assert.True(sistema.COPT);
+        }
+
+        [Fact]
+        [Trait("Category", "COPT")]
+        public void COPTConPlanetasAlineados3()
+        {
+            var sistema = CrearSistema(244, 220, 12);
+            sistema.CalcularClima();
+            Assert.True(sistema.COPT);
+        }
+
+        [Fact]
+        [Trait("Category", "COPT")]
+        public void COPTConPlanetasAlineados4()
+        {
+            var sistema = CrearSistema(227, 305, 321);
+            sistema.CalcularClima();
+            Assert.True(sistema.COPT);
+        }
+
+        [Fact]
+        [Trait("Category", "COPT")]
+        public void SinCOPTConSequia()
+        {
+            var sistema = CrearSistema(0, 180, 180);
+            sistema.CalcularClima();
+            Assert.False(sistema.COPT);
+        }
+
+        [Fact]
         [Trait("Category", "Planeta")]
         public void AvanzarDiaReduceAnguloSentidoHorario()
         {
-            var sistema = CrearSistema2();
-            var anguloOriginal = sistema.Planetas[1].Angulo;
-            var velocidad = sistema.Planetas[1].Velocidad;
+            var sistema = CrearSistema(180, 180, 180);
+            // Planeta 2 gira horario.
+            var anguloOriginal = sistema.Planetas[2].Angulo;
+            var velocidad = sistema.Planetas[2].Velocidad;
             sistema.AvanzarDia();
-            Assert.Equal(sistema.Planetas[1].Angulo, anguloOriginal - velocidad);
+            Assert.Equal(sistema.Planetas[2].Angulo, anguloOriginal - velocidad);
         }
 
         [Fact]
         [Trait("Category", "Planeta")]
         public void AvanzarDiaAumentaAnguloSentidoAntiHorario()
         {
-            var sistema = CrearSistema2();
-            var anguloOriginal = sistema.Planetas[2].Angulo;
-            var velocidad = sistema.Planetas[2].Velocidad;
+            var sistema = CrearSistema(180, 180, 180);
+            // Planeta 1 gira anti-horario.    
+            var anguloOriginal = sistema.Planetas[1].Angulo;
+            var velocidad = sistema.Planetas[1].Velocidad;
             sistema.AvanzarDia();
-            Assert.Equal(sistema.Planetas[2].Angulo, anguloOriginal + velocidad);
+            Assert.Equal(sistema.Planetas[1].Angulo, anguloOriginal + velocidad);
         }
 
         [Fact]
@@ -140,16 +187,6 @@ namespace SistemaSolar.Test
                 new Planeta(500, 1, true, "Ferengi", angulo1),
                 new Planeta(1000, 5, false, "Vulcano", angulo2),
                 new Planeta(2000, 3, true, "Betasoide", angulo3)                
-            });
-        }
-
-        private Espacio CrearSistema2()
-        {
-            return new Espacio(new List<Planeta>
-            {
-                new Planeta(500, 1, true, "Ferengi", 180),
-                new Planeta(1000, 5, true, "Vulcano", 180),
-                new Planeta(2000, 3, false, "Betasoide", 180)
             });
         }
     }
