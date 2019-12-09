@@ -1,0 +1,15 @@
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[tipos_clima](
+	[tipoClimaId] [numeric](18, 0) IDENTITY(1,1) NOT NULL,
+	[nombre] [nvarchar](50) NOT NULL,
+ CONSTRAINT [PK_tipos_clima] PRIMARY KEY CLUSTERED 
+(
+	[tipoClimaId] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
